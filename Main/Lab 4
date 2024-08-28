@@ -1,0 +1,58 @@
+import random
+import turtle
+
+class Node:
+    def __init__(self, key):
+        self.key = key
+        self.left = None
+        self.right = None
+
+def add_node(root, key):
+    if root is None:
+        return Node(key)
+    else:
+        if key <= root.key:
+            root.left = add_node(root.left, key)
+        else:
+            root.right = add_node(root.right, key)
+    return root
+
+def build_tree(n):
+    root = None
+    for _ in range(n):
+        key = random.randint(-1000, 0)
+        root = add_node(root, key)
+    return root
+
+def visualize_tree(node, x, y, dx):
+    if node is None:
+        return
+
+    turtle.goto(x, y)
+    turtle.write(str(node.key), align='center', font=('Arial', 12, 'normal'))
+
+    if node.left is not None:
+        turtle.goto(x, y)
+        turtle.down()
+        turtle.goto(x - dx, y - 60)
+        turtle.up()
+        visualize_tree(node.left, x - dx, y - 60, dx / 2)
+
+    if node.right is not None:
+        turtle.goto(x, y)
+        turtle.down()
+        turtle.goto(x + dx, y - 60)
+        turtle.up()
+        visualize_tree(node.right, x + dx, y - 60, dx / 2)
+
+# Створення випадкового бінарного дерева пошуку з 12 вузлами
+root = build_tree(12)
+
+# Налаштування turtle для візуалізації
+turtle.speed('fastest')
+turtle.penup()
+
+# Виклик функції візуалізації
+visualize_tree(root, 0, 200, 100)
+
+turtle.done()

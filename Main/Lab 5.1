@@ -1,0 +1,37 @@
+import os
+import networkx as nx
+import matplotlib.pyplot as plt
+
+def build_file_system_graph(root_dir, max_depth=3):
+    G = nx.Graph()
+    node_sizes = {}
+    node_colors = {}
+
+    def traverse_directory(current_dir, current_depth=0):
+        if current_depth > max_depth:
+            return
+
+        node_colors[current_dir] = 'blue'
+        node_sizes[current_dir] = 1000 / (current_depth + 1)
+
+        for entry in os.scandir(current_dir):
+            if entry.is_dir():
+                G.add_edge(current_dir, entry.path)
+                node_colors[entry.path] = 'blue'
+                node_sizes[entry.path] = 1000 / (current_depth + 1)
+                traverse_directory(entry.path, current_depth + 1)
+            elif entry.is_file():
+                G.add_edge(current_dir, entry.path)
+                node_colors[entry.path] = 'red'
+                node_sizes[entry.path] = 500 / (current_depth + 1)
+
+    traverse_directory(root_dir)
+    return G, node_sizes, node_colors
+
+def visualize_file_system_graph(G, node_sizes, node_colors):
+    pos = nx.spring_layout(G)
+    plt.figure(figsize=(12, 8))
+    nx.draw(G, pos, node_size=[node_sizes[v] for v in G.nodes()],
+            node_color=[node_colors[v] for v in G.nodes()], with_labels=True,
+            font_size=8, font_color='black', edge_color='gray')
+    plt.axis(' &#8203;:citation[oaicite:0]{index=0}&#8203;

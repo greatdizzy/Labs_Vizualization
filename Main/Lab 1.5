@@ -1,0 +1,51 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+
+# Дані
+years = [1900, 1913, 1929, 1938, 1950, 1960, 1970, 1980, 1990, 2000]
+values_germany = [29, 51, 59, 478, 93, 244, 420, 510, 575, 625]
+values_france = [28, 46, 57, 52, 63, 93, 190, 275, 310, 355]
+values_uk = [53, 73, 84, 105, 130, 180, 245, 265, 300, 335]
+values_ussr = [40, 70, 80, 105, 205, 480, 725, 935, 1000, 545]
+
+# Підготовка даних для 2D стовпчикової діаграми
+fig, ax = plt.subplots()
+bar_width = 0.2
+index = np.arange(len(years))
+
+rects1 = ax.bar(index, values_germany, bar_width, label='Германія')
+rects2 = ax.bar(index + bar_width, values_france, bar_width, label='Франція')
+rects3 = ax.bar(index + 2 * bar_width, values_uk, bar_width, label='Великобританія')
+rects4 = ax.bar(index + 3 * bar_width, values_ussr, bar_width, label='СССР')
+
+ax.set_xlabel('Рік')
+ax.set_ylabel('Додана вартість (у мільярдах)')
+ax.set_title('Додана промислова вартість за країнами з часом')
+ax.set_xticks(index + 1.5 * bar_width)
+ax.set_xticklabels(years)
+ax.legend()
+
+plt.show()
+
+x = np.arange(len(years))  # Позиції років на осі X
+y = np.array([0, 1, 2, 3])  # Позиції країн на осі Y
+
+# Побудова 3D діаграми
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+
+# Додавання стовпців на діаграму
+for i, country_values in enumerate([values_germany, values_france, values_uk, values_ussr]):
+    ax.bar(x, country_values, zs=i, zdir='y', width=0.2, alpha=0.8, align='center')
+
+ax.set_xlabel('Рік')
+ax.set_ylabel('Страна')
+ax.set_zlabel('Додана вартість (у мільярдах)')
+ax.set_yticks(range(4))
+ax.set_yticklabels(['Германія', 'Франція', 'Великобританія', 'СССР'])
+ax.set_xticks(range(len(years)))
+ax.set_xticklabels(years, rotation=45)
+ax.set_title('Тривимірний перегляд доданої промислової вартості за країнами за певний час')
+
+plt.show()

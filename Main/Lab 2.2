@@ -1,0 +1,20 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+def u(x, y):
+    return np.sin(x)
+
+def v(x, y):
+    return np.sin(y)
+
+xx, yy = np.meshgrid(np.linspace(-2 * np.pi, 2 * np.pi, 20),
+                     np.linspace(-2 * np.pi, 2 * np.pi, 20))
+
+u_val = u(xx, yy)
+v_val = v(xx, yy)
+
+plt.quiver(xx, yy, u_val, v_val)
+plt.show()
+
+plt.streamplot(xx, yy, u_val, v_val)
+plt.show()

@@ -1,0 +1,25 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Задаємо кутову сітку
+fig = np.linspace(0, 2 * np.pi, 100)
+
+# Рівняння кривої Лімацону Паскаля для двох значень параметра: r = 2r0 * cos(phi) ± 1
+# Для r0 = 1
+r0 = 1
+r1 = 2 * r0 * np.cos(fig) + 1
+r2 = 2 * r0 * np.cos(fig) - 1
+
+# Створюємо полярну систему координат
+plt.figure(figsize=(5, 5))
+ax = plt.subplot(projection='polar')
+
+# Створюємо графіки
+ax.plot(fig, r1, label=r'$r = 2r_0\cos(\phi) + 1$')
+ax.plot(fig, r2, label=r'$r = 2r_0\cos(\phi) - 1$')
+
+# Легенда та заголовок
+ax.legend()
+ax.set_title('Улитка Паскаля')
+
+plt.show()

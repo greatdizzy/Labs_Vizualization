@@ -1,0 +1,73 @@
+# Импорт необходимых библиотек
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA, TruncatedSVD
+
+# Загрузка данных
+data = np.genfromtxt('glass.data', delimiter=',')
+X = data[:, 1:10]  # Признаки
+
+# Нормализация данных
+from sklearn.preprocessing import StandardScaler
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# 1. Визуализация данных в 2D и 3D с помощью PCA
+pca_2d = PCA(n_components=2)
+X_pca_2d = pca_2d.fit_transform(X_scaled)
+
+plt.figure()
+plt.scatter(X_pca_2d[:, 0], X_pca_2d[:, 1], c=data[:, 10].astype(int), cmap='Set1')
+plt.xlabel('Компонента 1')
+plt.ylabel('Компонента 2')
+plt.title('PCA проекция на 2D')
+plt.colorbar()
+plt.grid(True)
+plt.show()
+
+pca_3d = PCA(n_components=3)
+X_pca_3d = pca_3d.fit_transform(X_scaled)
+
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+scatter = ax.scatter(X_pca_3d[:, 0], X_pca_3d[:, 1], X_pca_3d[:, 2], c=data[:, 10].astype(int), cmap='Set1')
+fig.colorbar(scatter)
+ax.set_xlabel('Компонента 1')
+ax.set_ylabel('Компонента 2')
+ax.set_zlabel('Компонента 3')
+ax.set_title('PCA проекция на 3D')
+plt.show()
+
+# 2. Построение графика зависимости собственных значений от их номера с использованием SVD
+svd = TruncatedSVD(n_components=min(X_scaled.shape[0], X_scaled.shape[1]))
+svd.fit(X_scaled)
+
+plt.figure()
+plt.plot(range(1, len(svd.singular_values_) + 1), svd.singular_values_, marker='o')
+plt.xlabel('Номер')
+plt.ylabel('Собственное значение')
+plt.title('Зависимость собственных значений от номера (SVD)')
+plt.grid(True)
+plt.show()
+
+# 3. Поиск минимального значения d для выполнения соотношения
+total_variance = np.sum(svd.singular_values_)
+cumulative_variance = np.cumsum(svd.singular_values_) / total_variance
+d = np.searchsorted(cumulative_variance, 0.8) + 1
+
+print(f'Минимальное значение размера пространства d, для которого выполняется соотношение: {d}')
+
+# 4. Обнуление λi, для которых d <= i <= n, и выполнение обратного преобразования
+svd_reduced = TruncatedSVD(n_components=d)
+X_transformed = svd_reduced.fit_transform(X_scaled)
+X_restored = svd_reduced.inverse_transform(X_transformed)
+
+# Визуализация восстановленных данных (первых двух компонент)
+plt.figure()
+plt.scatter(X_restored[:, 0], X_restored[:, 1], c=data[:, 10].astype(int), cmap='Set1')
+plt.xlabel('Компонента 1')
+plt.ylabel('Компонента 2')
+plt.title('Восстановленные данные после SVD')
+plt.colorbar()
+plt.grid(True)
+plt.show()

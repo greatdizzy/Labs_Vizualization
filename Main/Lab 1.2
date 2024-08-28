@@ -1,0 +1,27 @@
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.pyplot as plt
+from matplotlib import cm
+from matplotlib.ticker import LinearLocator, FormatStrFormatter
+import numpy as np
+
+fig = plt.figure()
+ax = fig.add_subplot(projection='3d')
+
+# Діапазон даних
+X = np.arange(-5, 5, 0.25)
+Y = np.arange(-5, 5, 0.25)
+X, Y = np.meshgrid(X, Y)
+Z = X**6 - 3 * np.exp(0.7*Y) * Y**3
+
+# Будуємо поверхню:
+surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm, linewidth=0, antialiased=False)
+
+ax.set_xlabel('ось X')
+ax.set_ylabel('ось Y')
+ax.set_zlabel('ось Z')
+ax.set_title('Поверхность Z(X,Y)')
+
+# Легенда кольрів.
+#fig.colorbar(surf, shrink=0.5, aspect=5)
+
+plt.show()

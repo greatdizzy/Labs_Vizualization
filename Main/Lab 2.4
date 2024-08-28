@@ -1,0 +1,55 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from mayavi import mlab
+
+# Импорт функций из glyph_visualization_lib
+from glyph_visualization_lib import get_von_Mises_stress, get_glyph_data, get_colormap_ratio_on_stress, supported_modifiers
+
+# Создание массива точек
+x = np.linspace(1, 5, 8)
+y = np.linspace(1, 5, 8)
+z = np.linspace(1, 5, 8)
+X, Y, Z = np.meshgrid(x, y, z)
+
+# Вычисление тензора в каждой точке
+T = np.array([[(X**2 + Y**2 + Z**2), (X + Y), (X + Z)],
+              [Y, (X**2 + Y**2 + Z**2), (Y + Z)],
+              [Z, X, (X**2 + Y**2 + Z**2)]])
+
+# Нахождение пределов для нормализации цветов
+vm_stress = get_von_Mises_stress(T)
+limits = [np.min(vm_stress), np.max(vm_stress)]
+
+# Установка радиуса и цветовой карты
+glyph_radius = 0.25
+colormap = plt.get_cmap('rainbow', 120)
+
+# Создание фигуры Mayavi
+fig = mlab.figure(bgcolor=(1, 1, 1))
+
+# Итерация по всем точкам
+for i in range(x.size):
+    for j in range(y.size):
+        for k in range(z.size):
+            center = [x[i], y[j], z[k]]
+            data = T[:, :, i, j, k]
+            color = colormap(get_colormap_ratio_on_stress(vm_stress[i, j, k], limits))[:3]
+
+            # Эллипсоид
+            x_e, y_e, z_e = get_glyph_data(center, data, limits, glyph_radius=glyph_radius, glyph_type=2)
+            mlab.mesh(x_e, y_e, z_e, color=color)
+
+            # Кубоид
+            x_c, y_c, z_c = get_glyph_data(center, data, limits, glyph_radius=glyph_radius, glyph_type=0)
+            mlab.mesh(x_c, y_c, z_c, color=color)
+
+            # Цилиндр
+            x_y, y_y, z_y = get_glyph_data(center, data, limits, glyph_radius=glyph_radius, glyph_type=1)
+            mlab.mesh(x_y, y_y, z_y, color=color)
+
+            # Суперквадрик
+            x_s, y_s, z_s = get_glyph_data(center, data, limits, glyph_radius=glyph_radius, glyph_type=3, superquadrics_option=2)
+            mlab.mesh(x_s, y_s, z_s, color=color)
+
+mlab.move(forward=1.8)
+mlab.show()

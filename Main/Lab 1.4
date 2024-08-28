@@ -1,0 +1,30 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+
+# Параметри циліндра
+a = 1
+b = 1
+height = 5
+
+# Кути та висота для параметризації
+theta = np.linspace(-np.pi / 2, np.pi / 2, 100)
+z = np.linspace(0, height, 100)
+
+# Параметризація гіперболічного циліндра
+X = a * np.cosh(theta)
+Y = b * np.sinh(theta)
+Z = np.outer(z, np.ones(len(theta)))
+
+# Побудова графіка
+fig = plt.figure()
+ax = fig.add_subplot(projection='3d')
+ax.plot_surface(X, Y, Z)
+ax.plot_surface(-X, Y, Z)
+
+# Налаштування осей
+ax.set_xlabel('X')
+ax.set_ylabel('Y')
+ax.set_zlabel('Z')
+
+plt.show()

@@ -1,0 +1,22 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+x = np.linspace(-5,10,100)
+y = 3 * (np.cos(2 * x))**2 * np.sin(5 * x)
+z = np.where(x < 0, 3 * x + np.sqrt(1 + x**2),
+    np.where(x <= 1, 2 * np.cos(x) * np.exp(-2 * x),
+    2 * np.sin(3 * x)))
+# створення об'єктів фігури та осей
+fig, ax = plt.subplots()
+
+# будуємо лінійні графіки
+line_y, = ax.plot(x,y,label='Графік функції Y', color='red', linestyle='solid', linewidth=2)
+line_z, = ax.plot(x,z,label='Графік функції Z', color='green', linestyle='solid', linewidth=2)
+
+ax.set_xlabel('X')
+ax.set_ylabel('Y,Z')
+ax.set_title('Графік функції Y и Z')
+
+ax.legend()
+
+plt.show()

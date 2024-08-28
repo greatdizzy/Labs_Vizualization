@@ -1,0 +1,64 @@
+# Импорт необходимых библиотек
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE, Isomap, MDS, SpectralEmbedding, LocallyLinearEmbedding as LLE
+
+# Загрузка данных
+data = np.genfromtxt('glass.data', delimiter=',')
+X = data[:, 1:10]  # Признаки
+y = data[:, 10].astype(int)  # Целевой атрибут
+
+# Нормализация данных
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Функция для визуализации данных в 2D
+def plot_2d_projection(X, title, xlabel, ylabel):
+    plt.figure(figsize=(8, 6))
+    scatter = plt.scatter(X[:, 0], X[:, 1], c=y, cmap=plt.cm.Set1, edgecolor='k', s=50)
+    plt.colorbar(scatter)
+    plt.title(title)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.grid(True)
+    plt.show()
+
+# Функция для визуализации данных в 3D
+def plot_3d_projection(X, title, xlabel, ylabel, zlabel):
+    fig = plt.figure(figsize=(8, 6))
+    ax = fig.add_subplot(111, projection='3d')
+    scatter = ax.scatter(X[:, 0], X[:, 1], X[:, 2], c=y, cmap=plt.cm.Set1, edgecolor='k', s=50)
+    fig.colorbar(scatter)
+    ax.set_title(title)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    ax.set_zlabel(zlabel)
+    plt.show()
+
+# Снижение размерности с помощью различных методов
+methods = {
+    "PCA": PCA(n_components=2),
+    "t-SNE": TSNE(n_components=2, init='pca', random_state=0),
+    "Isomap": Isomap(n_neighbors=10, n_components=2),
+    "MDS": MDS(n_components=2, n_init=1, max_iter=100),
+    "Spectral Embedding": SpectralEmbedding(n_components=2, random_state=0),
+    "LLE": LLE(n_neighbors=10, n_components=2, method='standard')
+}
+
+# Проекция на 2D с использованием всех методов
+for name, method in methods.items():
+    X_reduced = method.fit_transform(X_scaled)
+    plot_2d_projection(X_reduced, f"{name} Projection", "Component 1", "Component 2")
+
+# Проекция на 3D с использованием методов PCA и t-SNE
+methods_3d = {
+    "PCA": PCA(n_components=3),
+    "t-SNE": TSNE(n_components=3, init='pca', random_state=0)
+}
+
+for name, method in methods_3d.items():
+    X_reduced = method.fit_transform(X_scaled)
+    plot_3d_projection(X_reduced, f"{name} Projection", "Component 1", "Component 2", "Component 3")

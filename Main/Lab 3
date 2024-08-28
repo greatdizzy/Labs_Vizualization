@@ -1,0 +1,35 @@
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation, PillowWriter
+import matplotlib.patches as mpatches
+import numpy as np
+
+# Налаштування графіка
+fig, ax = plt.subplots()
+ax.set_aspect('equal')
+ax.set_xlim(-3, 3)
+ax.set_ylim(-3, 3)
+
+# Радіус кола, по якому рухатиметься п'ятикутник
+circle_radius = 2
+
+# Створення п'ятикутника
+polygon = mpatches.RegularPolygon((0, 0), numVertices=5, radius=0.5, orientation=np.pi/5)
+ax.add_patch(polygon)
+
+# Функція оновлення для кожного кадру анімації
+def update(frame):
+    angle = np.radians(frame)
+    x = circle_radius * np.cos(angle)
+    y = circle_radius * np.sin(angle)
+    polygon.xy = (x, y)
+    return polygon,
+
+# Створення анімації
+ani = FuncAnimation(fig, update, frames=np.arange(0, 360, 1), interval=20, blit=True)
+
+# Збереження анімації як GIF за допомогою PillowWriter
+gif_writer = PillowWriter(fps=30)
+ani.save('pentagon_circle_animation.gif', writer=gif_writer)
+
+# Показ анімації (за бажанням)
+plt.show()
